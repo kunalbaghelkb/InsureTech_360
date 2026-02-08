@@ -14,7 +14,6 @@ venv/
 config.yaml
 
 # Project Artifacts
-artifacts/*
 !artifacts/.gitkeep
 
 # Models Related Files
@@ -23,6 +22,7 @@ artifacts/models/*.h5
 artifacts/data/*.csv
 artifacts/data/*.xlsx
 artifacts/data/*.pdf
+artifacts/data/car_images/
 artifacts/faiss_index/
 
 # RAG / Vector DB

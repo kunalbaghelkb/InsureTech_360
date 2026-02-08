@@ -32,11 +32,28 @@ It unifies **Computer Vision (CNN)** for damage assessment, **Deep Learning (ANN
 
 ---
 
-## 📂 Dataset Sources
-This project simulates a real-world messy environment by combining multiple data sources:
-1.  **Tabular Data:** Vehicle Insurance Claim Fraud Detection (Kaggle).
-2.  **Image Data:** Car Damage Detection Dataset (Kaggle).
-3.  **Unstructured Data:** Generic Car Insurance Policy PDF (for RAG).
+## 📂 Datasets & Resources Used
+
+To run this project locally, you will need to download the following datasets and place them in the `artifacts/data/` folder as per the structure mentioned below.
+
+### 1. Insurance Fraud Detection Dataset (CSV)
+This dataset is used to train the ANN model for predicting fraudulent claims.
+- **Source:** Kaggle (Vehicle Claim Fraud Detection)
+- **Download Link:** [Click Here to Download CSV](https://www.kaggle.com/datasets/shivamb/vehicle-claim-fraud-detection)
+- **Placement:** Extract and rename the file to `insurance_claims.csv` inside `artifacts/data/`.
+
+### 2. Car Damage Detection Dataset (Images)
+This dataset is used to train the CNN model to detect if a car is damaged or whole.
+- **Source:** Kaggle (Car Damage Detection)
+- **Download Link:** [Click Here to Download Images](https://www.kaggle.com/datasets/anujms/car-damage-detection)
+- **Placement:** Extract the folders (`00-damage`, `01-whole`) inside `artifacts/data/car_images/`.
+  - Ensure structure: `artifacts/data/car_images/data/training/` and `validation/`.
+
+### 3. Policy Document for Chatbot (RAG)
+This PDF is used by the Gemini-powered chatbot to answer user queries regarding insurance policies.
+- **Sample File:** You can use any standard Car Insurance Policy PDF.
+- **Example Link:** [Sample Policy PDF (Generic)](https://icai.newindia.co.in/NIAICAI/images/pdf/car_schedule.pdf)
+- **Placement:** Save the file as `policy.pdf` inside `artifacts/data/`.
 
 ---
 
@@ -77,13 +94,15 @@ The project follows a modular, production-ready structure:
 
 1. Clone the Repository
     ```bash
-    git clone [https://github.com/kunalbaghelkb/InsureTech_360.git](https://github.com/kunalbaghelkb/InsureTech_360.git) && cd InsureTech_360
+    git clone https://github.com/kunalbaghelkb/InsureTech_360.git && cd InsureTech_360
 
 2. Create Virtual Environment
     ```bash
     python3.11 -m venv .venv
+    
     # Windows
     .venv\Scripts\activate
+
     # Mac/Linux
     source .venv/bin/activate
 
@@ -94,11 +113,16 @@ The project follows a modular, production-ready structure:
 4. Set Environment Variables
 Create a .env file in the root directory and add your keys
     ```bash
-    OPENAI_API_KEY=your_api_key_here
-    # OR
-    GOOGLE_API_KEY=your_api_key_here
+    GEMINI_API_KEY=your_api_key_here
+    GOOGLE_LLM_MODEL_NAME=gemini-2.5-flash (configure as needed)
+    GOOGLE_EMBED_MODEL_NAME=gemini-embedding-001 (configure as needed)
 
-5. Run the Application
+5. Generate Model
+Execute this file to generate the model (Ensure that all required datasets and resources have been added as specified.)
+    ```bash
+    src/pipelines/training_pipeline.py
+
+6. Run the Application
     ```bash
     python app.py
 
