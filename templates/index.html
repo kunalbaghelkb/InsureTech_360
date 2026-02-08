@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+    <title>InsureTech 360 — Claims Assessment Portal</title>
+    <meta name="title" content="InsureTech 360 — Claims Assessment Portal">
+    <meta name="description"
+        content="Internal admin portal for claims adjusters to analyze fraud risk and assess vehicle damage using AI-powered tools. Streamline your claims workflow.">
+    <meta name="keywords"
+        content="insurance technology, AI claims processing, fraud detection, vehicle damage assessment, machine learning, insurtech">
+    <meta name="author" content="Kunal Baghel">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://insuretech360.com/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://insuretech360.com/">
+    <meta property="og:title" content="InsureTech 360 — Claims Assessment Portal">
+    <meta property="og:description"
+        content="Internal admin portal for claims adjusters to analyze fraud risk and assess vehicle damage using AI-powered tools.">
+    <meta property="og:image" content="https://insuretech360.com/static/images/og-image.jpg">
+    <meta property="og:site_name" content="InsureTech 360">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://insuretech360.com/">
+    <meta property="twitter:title" content="InsureTech 360 — Claims Assessment Portal">
+    <meta property="twitter:description"
+        content="Internal admin portal for claims adjusters to analyze fraud risk and assess vehicle damage using AI-powered tools.">
+    <meta property="twitter:image" content="{{ url_for('static', filename='images/logo.png') }}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Archivo:wght@400;500;600;700;900&display=swap"
+        rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "InsureTech 360",
+      "description": "AI-powered insurance claims processing and fraud detection platform",
+      "url": "https://insuretech360.com/",
+      "logo": "{{ url_for('static', filename='images/logo.png') }}",
+      "sameAs": [
+        "https://github.com/kunalbaghelkb",
+        "https://linkedin.com/in/kunalbaghelz"
+      ]
+    }
+    </script>
+</head>
+
+<body>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader-container">
+            <div class="loader">
+                <div class="loader-ring"></div>
+                <div class="loader-ring"></div>
+                <div class="loader-ring"></div>
+            </div>
+            <p class="loader-text">Analyzing claim data...</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <div class="brand-icon">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="brand-logo-img">
+                </div>
+                <div class="brand-text">
+                    <h1>InsureTech 360</h1>
+                    <span class="brand-subtitle">Claims Assessment Portal</span>
+                </div>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="material-icons-round">auto_awesome</span>
+                    <span>Internal Claims Portal</span>
+                </div>
+                <h2 class="hero-title">Claims Assessment<br />& Fraud Detection Tools</h2>
+                <p class="hero-description">Streamline your claims workflow with AI-powered fraud detection and
+                    automated damage assessment. Make faster, more accurate decisions.</p>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <span class="stat-number">99.2%</span>
+                    <span class="stat-label">Accuracy Rate</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">&lt;3s</span>
+                    <span class="stat-label">Avg. Processing</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Availability</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-container">
+
+            <div class="feature-card fraud-card">
+                <div class="card-header">
+                    <div class="card-icon fraud-icon">
+                        <span class="material-icons-round">shield</span>
+                    </div>
+                    <div class="card-title-group">
+                        <h3 class="card-title">Fraud Risk Assessment</h3>
+                        <p class="card-subtitle">Analyze claim data and get instant fraud probability scores</p>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <form action="/predict_fraud" method="POST" class="fraud-form" id="fraudForm">
+
+                        <div class="form-section">
+                            <div class="section-header">
+                                <span class="material-icons-round">person</span>
+                                <h4>Driver & Policy Profile</h4>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-field">
+                                    <label class="form-label" for="months_as_customer">Months as Customer</label>
+                                    <div class="input-wrapper">
+                                        <input type="number" id="months_as_customer" name="months_as_customer"
+                                            class="form-input" required value="120">
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="age">Age</label>
+                                    <div class="input-wrapper">
+                                        <input type="number" id="age" name="age" class="form-input" required value="35">
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="sex">Sex</label>
+                                    <div class="select-wrapper">
+                                        <select id="sex" name="sex" class="form-select">
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="marital_status">Marital Status</label>
+                                    <div class="select-wrapper">
+                                        <select id="marital_status" name="marital_status" class="form-select">
+                                            <option value="Married">Married</option>
+                                            <option value="Single">Single</option>
+                                            <option value="Divorced">Divorced</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="policy_annual_premium">Policy Premium</label>
+                                    <div class="input-wrapper input-with-icon">
+                                        <span class="input-icon">$</span>
+                                        <input type="number" step="0.01" id="policy_annual_premium"
+                                            name="policy_annual_premium" class="form-input" required value="1000">
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="policy_deductable">Policy Deductible</label>
+                                    <div class="input-wrapper input-with-icon">
+                                        <span class="input-icon">$</span>
+                                        <input type="number" id="policy_deductable" name="policy_deductable"
+                                            class="form-input" required value="500">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-header">
+                                <span class="material-icons-round">car_crash</span>
+                                <h4>Incident Details</h4>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-field">
+                                    <label class="form-label" for="accident_area">Accident Area</label>
+                                    <div class="select-wrapper">
+                                        <select id="accident_area" name="accident_area" class="form-select">
+                                            <option value="Urban">Urban</option>
+                                            <option value="Rural">Rural</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="fault">Incident Fault</label>
+                                    <div class="select-wrapper">
+                                        <select id="fault" name="fault" class="form-select">
+                                            <option value="Policy Holder">Policy Holder</option>
+                                            <option value="Third Party">Third Party</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="vehicle_category">Vehicle Category</label>
+                                    <div class="select-wrapper">
+                                        <select id="vehicle_category" name="vehicle_category" class="form-select">
+                                            <option value="Sedan">Sedan</option>
+                                            <option value="Sport">Sport</option>
+                                            <option value="Utility">Utility</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="total_claim_amount">Total Claim Amount</label>
+                                    <div class="input-wrapper input-with-icon">
+                                        <span class="input-icon">$</span>
+                                        <input type="number" id="total_claim_amount" name="total_claim_amount"
+                                            class="form-input" required value="50000">
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="incident_hour_of_the_day">Incident Hour
+                                        (0-23)</label>
+                                    <div class="input-wrapper">
+                                        <input type="number" id="incident_hour_of_the_day"
+                                            name="incident_hour_of_the_day" class="form-input" required value="14">
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="number_of_vehicles_involved">Vehicles
+                                        Involved</label>
+                                    <div class="input-wrapper">
+                                        <input type="number" id="number_of_vehicles_involved"
+                                            name="number_of_vehicles_involved" class="form-input" required value="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Legal & Witnesses -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <span class="material-icons-round">gavel</span>
+                                <h4>Legal & Witnesses</h4>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-field">
+                                    <label class="form-label" for="police_report_filed">Police Report Filed</label>
+                                    <div class="select-wrapper">
+                                        <select id="police_report_filed" name="police_report_filed" class="form-select">
+                                            <option value="No">No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="witness_present">Witness Present</label>
+                                    <div class="select-wrapper">
+                                        <select id="witness_present" name="witness_present" class="form-select">
+                                            <option value="No">No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="witnesses">Witness Count</label>
+                                    <div class="input-wrapper">
+                                        <input type="number" id="witnesses" name="witnesses" class="form-input" required
+                                            value="0">
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="bodily_injuries">Bodily Injuries</label>
+                                    <div class="input-wrapper">
+                                        <input type="number" id="bodily_injuries" name="bodily_injuries"
+                                            class="form-input" required value="0">
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="umbrella_limit">Umbrella Limit</label>
+                                    <div class="input-wrapper input-with-icon">
+                                        <span class="input-icon">$</span>
+                                        <input type="number" id="umbrella_limit" name="umbrella_limit"
+                                            class="form-input" required value="0">
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="capital_gains">Capital Gains</label>
+                                    <div class="input-wrapper input-with-icon">
+                                        <span class="input-icon">$</span>
+                                        <input type="number" id="capital_gains" name="capital_gains" class="form-input"
+                                            required value="0">
+                                    </div>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="capital_loss">Capital Loss</label>
+                                    <div class="input-wrapper input-with-icon">
+                                        <span class="input-icon">$</span>
+                                        <input type="number" id="capital_loss" name="capital_loss" class="form-input"
+                                            required value="0">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary btn-large">
+                            <span class="material-icons-round">analytics</span>
+                            <span>Run Fraud Check</span>
+                        </button>
+                    </form>
+
+                    {% if fraud_result %}
+                    <div
+                        class="result-container {% if 'FRAUD' in fraud_result %}result-danger{% else %}result-success{% endif %}">
+                        <div class="result-icon">
+                            {% if 'FRAUD' in fraud_result %}
+                            <span class="material-icons-round">warning</span>
+                            {% else %}
+                            <span class="material-icons-round">check_circle</span>
+                            {% endif %}
+                        </div>
+                        <div class="result-content">
+                            <h4 class="result-title">
+                                {% if 'FRAUD' in fraud_result %}
+                                High Risk Detected
+                                {% else %}
+                                Low Risk — Claim Verified
+                                {% endif %}
+                            </h4>
+                            <p class="result-text">{{ fraud_result }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="feature-card damage-card">
+                <div class="card-header">
+                    <div class="card-icon damage-icon">
+                        <span class="material-icons-round">directions_car</span>
+                    </div>
+                    <div class="card-title-group">
+                        <h3 class="card-title">Vehicle Damage Analysis</h3>
+                        <p class="card-subtitle">Upload claim photos for AI damage detection and estimation</p>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <form action="/predict_damage" method="POST" enctype="multipart/form-data" id="damageForm">
+                        <div class="upload-area" id="uploadArea">
+                            <input class="file-input" type="file" id="fileUpload" name="file" accept="image/*"
+                                onchange="previewImage(event)">
+                            <label for="fileUpload" class="upload-label">
+                                <div class="upload-content">
+                                    <div class="upload-icon">
+                                        <span class="material-icons-round">cloud_upload</span>
+                                    </div>
+                                    <h4 class="upload-title">Upload Vehicle Image</h4>
+                                    <p class="upload-subtitle">Drag & drop or click to browse</p>
+                                    <span class="upload-hint">Supports: JPG, PNG, WebP, HEIC, AVIF, TIFF, BMP (Max
+                                        5MB)</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="preview-container" id="previewContainer" style="display: none;">
+                            <div class="preview-header">
+                                <span class="preview-title">Uploaded Image</span>
+                                <button type="button" class="btn-icon" onclick="resetUpload()">
+                                    <span class="material-icons-round">close</span>
+                                </button>
+                            </div>
+                            <img id="preview" src="{% if uploaded_image %}{{ uploaded_image }}{% endif %}"
+                                alt="Vehicle preview" class="preview-image">
+                        </div>
+
+                        <button type="submit" class="btn-primary btn-large">
+                            <span class="material-icons-round">camera_alt</span>
+                            <span>Assess Damage</span>
+                        </button>
+                    </form>
+
+                    {% if damage_result %}
+                    <div class="result-container result-info">
+                        <div class="result-icon">
+                            <span class="material-icons-round">info</span>
+                        </div>
+                        <div class="result-content">
+                            <h4 class="result-title">AI Analysis Complete</h4>
+                            <p class="result-text">{{ damage_result }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- AI Chatbot -->
+    <div class="chat-fab" onclick="toggleChat()" aria-label="Open AI Assistant">
+        <span class="material-icons-round chat-icon">smart_toy</span>
+        <span class="chat-pulse"></span>
+    </div>
+
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="chat-avatar">
+                    <span class="material-icons-round">support_agent</span>
+                </div>
+                <div class="chat-header-text">
+                    <h4>Claims Assistant</h4>
+                    <span class="chat-status">
+                        <span class="status-dot"></span>
+                        Online
+                    </span>
+                </div>
+            </div>
+            <button class="btn-icon" onclick="toggleChat()" aria-label="Close chat">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+
+        <div class="chat-body" id="chatBody">
+            <div class="message-container bot-message">
+                <div class="message-avatar">
+                    <span class="material-icons-round">smart_toy</span>
+                </div>
+                <div class="message-bubble">
+                    <p>Hello! 👋 I'm your AI claims assistant. I can help you with claim procedures, policy details,
+                        fraud indicators, and assessment guidelines.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-footer">
+            <div class="chat-input-container">
+                <input type="text" id="userInput" class="chat-input" placeholder="Ask about claims procedures..."
+                    onkeypress="handleEnter(event)">
+                <button class="btn-icon btn-send" onclick="sendMessage()" aria-label="Send message">
+                    <span class="material-icons-round">send</span>
+                </button>
+            </div>
+            <p class="chat-disclaimer">AI responses may contain errors. Verify important details.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <p class="footer-text">© {{ current_year }} InsureTech 360 Claims Portal. Internal Use Only.</p>
+                <p class="footer-credit">Developed by <span class="highlight">Kunal Baghel</span></p>
+            </div>
+            <div class="footer-links">
+                <a href="https://github.com/kunalbaghelkb" target="_blank" rel="noopener noreferrer" class="social-icon"
+                    aria-label="GitHub">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                        fill="currentColor">
+                        <path
+                            d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                    </svg>
+                </a>
+                <a href="https://linkedin.com/in/kunalbaghelz" target="_blank" rel="noopener noreferrer"
+                    class="social-icon" aria-label="LinkedIn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                        fill="currentColor">
+                        <path
+                            d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>

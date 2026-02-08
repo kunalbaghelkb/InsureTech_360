@@ -1,0 +1,20 @@
+pandas
+numpy
+seaborn
+matplotlib
+scikit-learn
+tensorflow
+flask
+python-dotenv
+langchain
+langchain-community
+langchain-openai
+langchain-google-genai
+faiss-cpu
+pypdf
+ipykernel
+imbalanced-learn
+google-generativeai
+google-genai
+flask_cors
+-e .
