@@ -1,0 +1,47 @@
+# --- Git & Version Control ---
+.git
+.gitignore
+.github
+
+# --- Python Junk ---
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.py[cod]
+*$py.class
+*.pyc
+.ipynb_checkpoints/
+
+# --- Virtual Environments ---
+venv
+env
+.venv
+
+# Application Logs
+logs/
+*.log
+
+# --- Secrets ---
+.env
+.env.local
+
+# --- Heavy Training Data ---
+artifacts/data/car_images/
+notebooks/
+
+# IDE Settings/OS Junk
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Build & Dist
+build/
+dist/
+*.egg-info/
+
+# --- Documentation ---
+README.md
+Dockerfile
+.dockerignore
