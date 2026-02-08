@@ -1,6 +1,6 @@
 # 🛡️ InsureTech 360: Intelligent Claims & Risk Assessment System
 
-![Python](https://img.shields.io/badge/Python-3.10-blue)
+![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![Framework](https://img.shields.io/badge/Framework-Flask-green)
 ![ML](https://img.shields.io/badge/AI-TensorFlow%20%7C%20ScikitLearn-orange)
 ![GenAI](https://img.shields.io/badge/GenAI-LangChain%20%7C%20RAG-purple)
@@ -99,7 +99,7 @@ The project follows a modular, production-ready structure:
 2. Create Virtual Environment
     ```bash
     python3.11 -m venv .venv
-    
+
     # Windows
     .venv\Scripts\activate
 
@@ -120,7 +120,7 @@ Create a .env file in the root directory and add your keys
 5. Generate Model
 Execute this file to generate the model (Ensure that all required datasets and resources have been added as specified.)
     ```bash
-    src/pipelines/training_pipeline.py
+    python src/pipelines/training_pipeline.py
 
 6. Run the Application
     ```bash
