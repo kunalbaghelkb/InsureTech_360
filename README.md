@@ -61,8 +61,6 @@ This PDF is used by the Gemini-powered chatbot to answer user queries regarding 
 ## 📂 Project Structure
 The project follows a modular, production-ready structure:
 
-## 📁 Project Structure
-
     InsureTech_360/
     ├── artifacts/                      # Stored Models, Preprocessors & Outputs (Ignored in Git)
     ├── logs/                           # Application & Pipeline Logs
