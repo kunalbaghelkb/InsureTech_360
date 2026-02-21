@@ -131,8 +131,8 @@ class DamagePredictor:
             # Logic check (0=Damaged or 1=Whole based on training mapping)
             # Usually: 0 (Damage) class comes first, then 1 (Whole)
             if result[0][0] > 0.5:
-                return "No visible damage detected"
+                return "no-damage-detected"
             else:
-                return "Damage detected!"
+                return "damage-detected"
         except Exception as e:
             raise CustomException(e, sys)

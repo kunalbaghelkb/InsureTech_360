@@ -17,6 +17,26 @@ function hideLoading() {
 
 // Form Submission Handlers
 document.addEventListener('DOMContentLoaded', function() {
+    // Session Timer
+    let sessionSeconds = 0;
+    const sessionTimeEl = document.getElementById('sessionTime');
+    
+    if (sessionTimeEl) {
+        setInterval(() => {
+            sessionSeconds++;
+            const hours = Math.floor(sessionSeconds / 3600);
+            const minutes = Math.floor((sessionSeconds % 3600) / 60);
+            const secs = sessionSeconds % 60;
+            
+            const timeStr = hours > 0 
+                ? `${hours}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
+                : `${minutes}:${String(secs).padStart(2, '0')}`;
+            
+            sessionTimeEl.textContent = `Session: ${timeStr}`;
+        }, 1000);
+    }
+
+    // Smooth scroll on page load
     setTimeout(() => {
         const resultContainer = document.querySelector('.result-container');
         if (resultContainer) {
@@ -575,4 +595,54 @@ srOnlyStyle.textContent = `
 document.head.appendChild(srOnlyStyle);
 
 console.log('%c✨ InsureTech 360 ✨', 'color: #1a73e8; font-size: 20px; font-weight: bold;');
+
+// Assistant Card Functions
+function sendAssistantMessage() {
+    const input = document.getElementById('assistantInput');
+    const chatArea = document.getElementById('assistantChatArea');
+    
+    if (!input || !chatArea) return;
+    
+    const message = input.value.trim();
+    if (!message) return;
+    
+    // Add user message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'assistant-message user';
+    userMsg.innerHTML = `
+        <div class="assistant-avatar">
+            <span class="material-icons-round">person</span>
+        </div>
+        <div class="assistant-bubble">
+            <p>${message}</p>
+        </div>
+    `;
+    chatArea.appendChild(userMsg);
+    
+    input.value = '';
+    chatArea.scrollTop = chatArea.scrollHeight;
+    
+    // Simulate bot response
+    setTimeout(() => {
+        const botMsg = document.createElement('div');
+        botMsg.className = 'assistant-message bot';
+        botMsg.innerHTML = `
+            <div class="assistant-avatar">
+                <span class="material-icons-round">smart_toy</span>
+            </div>
+            <div class="assistant-bubble">
+                <p>I'm a demo assistant. In production, I would help with claims procedures and policy questions. Your question: "${message}"</p>
+            </div>
+        `;
+        chatArea.appendChild(botMsg);
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }, 1000);
+}
+
+function handleAssistantEnter(event) {
+    if (event.key === 'Enter') {
+        sendAssistantMessage();
+    }
+}
+
 console.log('%cDesigned by Kunal Baghel | 2026', 'color: #5f6368; font-size: 12px;');

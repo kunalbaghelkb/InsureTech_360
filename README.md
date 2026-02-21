@@ -6,9 +6,10 @@
 ![GenAI](https://img.shields.io/badge/GenAI-LangChain%20%7C%20RAG-purple)
 
 ## 📌 Project Overview
-**InsureTech 360** is an industry-level, full-stack AI application designed to automate and modernize the insurance claim process. Unlike traditional systems that rely on manual verification, this platform integrates multiple AI disciplines to handle "messy" real-world data.
 
-It unifies **Computer Vision (CNN)** for damage assessment, **Deep Learning (ANN)** for fraud detection, and **Generative AI (RAG)** for policy assistance into a single dashboard.
+**InsureTech 360** is an industry-level, full-stack AI application designed as an **Internal Agent-Assist Dashboard** to modernize the vehicle insurance claim process. Built specifically for Customer Support teams and Claims Adjusters, this platform reduces Average Handling Time (AHT) by integrating multiple AI disciplines to process "messy" real-world data instantly.
+
+It unifies **Computer Vision (CNN)** for rapid damage assessment, **Deep Learning (ANN)** for fraud detection, and **Generative AI (RAG)** for real-time policy assistance into a single, unified workspace.
 
 ---
 
