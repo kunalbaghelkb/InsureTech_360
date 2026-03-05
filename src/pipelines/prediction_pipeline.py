@@ -12,127 +12,157 @@ from src.constants import *
 # Fraud Prediction Pipeline
 class FraudData:
     """
-    This class maps HTML form data to a Pandas DataFrame
+    Maps HTML form fields to a Pandas DataFrame using the EXACT column names
+    from the training CSV. No hardcoded defaults — every value comes from the form.
     """
-    def __init__(self, 
-                 months_as_customer: int,
-                 age: int,
-                 policy_deductable: int,
-                 policy_annual_premium: float,
-                 umbrella_limit: int,
-                 capital_gains: int,
-                 capital_loss: int,
-                 incident_hour_of_the_day: int,
-                 number_of_vehicles_involved: int,
-                 bodily_injuries: int,
-                 witnesses: int,
-                 total_claim_amount: int,
-                 sex: str, 
-                 marital_status: str, 
-                 fault: str, 
-                 accident_area: str, 
-                 police_report_filed: str, 
-                 witness_present: str, 
-                 vehicle_category: str
-                 ):
-        
+    def __init__(self,
+        # ── Numeric ─────────────────────────────────────────────────────────
+        age: int,
+        week_of_month: int,
+        week_of_month_claimed: int,
+        rep_number: int,
+        deductible: int,
+        driver_rating: int,
+        year: int,
+        # ── Categorical — main fraud signals ────────────────────────────────
+        month: str,
+        day_of_week: str,
+        make: str,
+        accident_area: str,
+        day_of_week_claimed: str,
+        month_claimed: str,
+        sex: str,
+        marital_status: str,
+        fault: str,
+        policy_type: str,
+        vehicle_category: str,
+        vehicle_price: str,
+        days_policy_accident: str,
+        days_policy_claim: str,
+        past_number_of_claims: str,
+        age_of_vehicle: str,
+        age_of_policy_holder: str,
+        police_report_filed: str,
+        witness_present: str,
+        agent_type: str,
+        number_of_suppliments: str,
+        address_change_claim: str,
+        number_of_cars: str,
+        base_policy: str,
+    ):
+        # Keys MUST match the exact CSV column names (what training used)
         self.data_dict = {
-            "MonthsAsCustomer": [months_as_customer],
-            "Age": [age],
-            "Deductible": [policy_deductable],
-            "PolicyAnnualPremium": [policy_annual_premium],
-            "UmbrellaLimit": [umbrella_limit],
-            "CapitalGains": [capital_gains],
-            "CapitalLoss": [capital_loss],
-            "IncidentHourOfTheDay": [incident_hour_of_the_day],
-            "NumberOfVehiclesInvolved": [number_of_vehicles_involved],
-            "BodilyInjuries": [bodily_injuries],
-            "Witnesses": [witnesses],
-            "TotalClaimAmount": [total_claim_amount],
-            "Sex": [sex],                      
-            "MaritalStatus": [marital_status], 
-            "Fault": [fault],                   
-            "AccidentArea": [accident_area],    
-            "PoliceReportFiled": [police_report_filed],
-            "WitnessPresent": [witness_present], 
-            "VehicleCategory": [vehicle_category],
-            "PolicyType": ["Sedan - Collision"], 
-            "VehiclePrice": ["20000 to 29000"],
-            "RepNumber": [1],
-            "Days_Policy_Accident": ["more than 30"],
-            "Days_Policy_Claim": ["more than 30"],
-            "PastNumberOfClaims": ["none"],
-            "AgeOfVehicle": ["7 years"],
-            "AgeOfPolicyHolder": ["31 to 35"],
-            "AgentType": ["External"],
-            "NumberOfSuppliments": ["none"],
-            "AddressChange_Claim": ["no change"],
-            "NumberOfCars": ["1 vehicle"],
-            "Year": [1994],
-            "BasePolicy": ["Collision"],
-            "Make": ["Honda"],
-            "Month": ["Jan"],
-            "WeekOfMonth": [3],
-            "DayOfWeek": ["Monday"],
-            "DayOfWeekClaimed": ["Monday"],
-            "MonthClaimed": ["Jan"],
-            "WeekOfMonthClaimed": [3],
-            "DriverRating": [1]
+            "Month":                  [month],
+            "WeekOfMonth":            [week_of_month],
+            "DayOfWeek":              [day_of_week],
+            "Make":                   [make],
+            "AccidentArea":           [accident_area],
+            "DayOfWeekClaimed":       [day_of_week_claimed],
+            "MonthClaimed":           [month_claimed],
+            "WeekOfMonthClaimed":     [week_of_month_claimed],
+            "Sex":                    [sex],
+            "MaritalStatus":          [marital_status],
+            "Age":                    [age],
+            "Fault":                  [fault],
+            "PolicyType":             [policy_type],
+            "VehicleCategory":        [vehicle_category],
+            "VehiclePrice":           [vehicle_price],
+            "RepNumber":              [rep_number],
+            "Deductible":             [deductible],
+            "DriverRating":           [driver_rating],
+            "Days_Policy_Accident":   [days_policy_accident],
+            "Days_Policy_Claim":      [days_policy_claim],
+            "PastNumberOfClaims":     [past_number_of_claims],
+            "AgeOfVehicle":           [age_of_vehicle],
+            "AgeOfPolicyHolder":      [age_of_policy_holder],
+            "PoliceReportFiled":      [police_report_filed],
+            "WitnessPresent":         [witness_present],
+            "AgentType":              [agent_type],
+            "NumberOfSuppliments":    [number_of_suppliments],
+            "AddressChange_Claim":    [address_change_claim],
+            "NumberOfCars":           [number_of_cars],
+            "Year":                   [year],
+            "BasePolicy":             [base_policy],
         }
+
     def get_data_as_df(self):
         try:
             return pd.DataFrame(self.data_dict)
         except Exception as e:
             raise CustomException(e, sys)
 
+
 class FraudPredictor:
+    """
+    Loads the ANN model and preprocessor once at class level to avoid
+    reloading heavy files on every API request.
+    """
+    _model = None
+    _preprocessor = None
+
     def __init__(self):
         self.model_path = ANN_MODEL_PATH
         self.preprocessor_path = PREPROCESSOR_PATH
-        
+
+    @classmethod
+    def reset(cls):
+        """Force reload of model/preprocessor (call after retraining)."""
+        cls._model = None
+        cls._preprocessor = None
+
+    def _load_resources(self):
+        if FraudPredictor._model is None:
+            logging.info(f"Loading Fraud ANN model from {self.model_path}")
+            FraudPredictor._model = load_model(self.model_path)
+        if FraudPredictor._preprocessor is None:
+            logging.info(f"Loading preprocessor from {self.preprocessor_path}")
+            FraudPredictor._preprocessor = load_object(file_path=self.preprocessor_path)
+
     def predict(self, features_df):
         try:
-            # Load Model & Scaler
-            model = load_model(self.model_path)
-            preprocessor = load_object(file_path=self.preprocessor_path)
-            
-            # Scale the data
-            data_scaled = preprocessor.transform(features_df)
-            
-            # Predict
-            prediction = model.predict(data_scaled)
-            
-            # 4. Return Result (0 or 1)
-            # We useed Class Weights so threshold will be 0.5
+            self._load_resources()
+
+            # Reorder columns to match the exact order the preprocessor was fitted on
+            expected_cols = list(FraudPredictor._preprocessor.feature_names_in_)
+            features_df = features_df[expected_cols]
+
+            # Transform and predict
+            data_scaled = FraudPredictor._preprocessor.transform(features_df)
+            prediction = FraudPredictor._model.predict(data_scaled)
             return 1 if prediction[0][0] > 0.5 else 0
-        
+
         except Exception as e:
             raise CustomException(e, sys)
-        
-# Damage Prediciton Pipeline
+
+
+# Damage Prediction Pipeline
 class DamagePredictor:
+    """
+    Loads the CNN model once at class level to avoid reloading on every request.
+    """
+    _model = None
+
     def __init__(self):
         self.model_path = CNN_MODEL_PATH
-        
+
+    def _load_resources(self):
+        if DamagePredictor._model is None:
+            logging.info(f"Loading CNN model from {self.model_path}")
+            DamagePredictor._model = load_model(self.model_path)
+
     def predict(self, image_path):
         try:
-            logging.info(f"Loading CNN Model from {self.model_path}")
-            model = load_model(self.model_path)
-            
-            # Preprocess Image (Resize & Rescale)
+            self._load_resources()
+
+            # Preprocess Image (Resize & Normalize)
             img = image.load_img(image_path, target_size=(IMAGE_HEIGHT, IMAGE_WIDTH))
             img_array = image.img_to_array(img)
-            img_array = np.expand_dims(img_array, axis=0) # Batch dimension
-            img_array = img_array / 255.0 # Normalize (Standard for CNNs)
-            
-            # Predict
-            result = model.predict(img_array)
-            
-            # Logic check (0=Damaged or 1=Whole based on training mapping)
-            # Usually: 0 (Damage) class comes first, then 1 (Whole)
-            if result[0][0] > 0.5:
-                return "no-damage-detected"
-            else:
-                return "damage-detected"
+            img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
+            img_array = img_array / 255.0                   # Normalize to [0, 1]
+
+            # Predict — class 0 = Damaged, class 1 = Whole
+            result = DamagePredictor._model.predict(img_array)
+            return "no-damage-detected" if result[0][0] > 0.5 else "damage-detected"
+
         except Exception as e:
             raise CustomException(e, sys)

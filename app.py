@@ -28,31 +28,43 @@ def predict_fraud():
         return render_template('index.html', current_year=datetime.now().year)
     
     try:
-        # Get Data from HTML Form (Keep name attributes in HTML form the same as in FraudData class)
+        # Read all 31 real CSV columns from the form — no hardcoded defaults
         data = FraudData(
-            # Numerical Features
-            months_as_customer = int(request.form.get('months_as_customer')),
-            age = int(request.form.get('age')),
-            policy_deductable = int(request.form.get('policy_deductable')),
-            policy_annual_premium = float(request.form.get('policy_annual_premium')),
-            umbrella_limit = int(request.form.get('umbrella_limit')),
-            capital_gains = int(request.form.get('capital_gains')),
-            capital_loss = int(request.form.get('capital_loss')),
-            incident_hour_of_the_day = int(request.form.get('incident_hour_of_the_day')),
-            number_of_vehicles_involved = int(request.form.get('number_of_vehicles_involved')),
-            bodily_injuries = int(request.form.get('bodily_injuries')),
-            witnesses = int(request.form.get('witnesses')),
-            total_claim_amount = int(request.form.get('total_claim_amount')),
-            
-            # Categorical Features
-            sex = request.form.get('sex'),
-            marital_status = request.form.get('marital_status'),
-            fault = request.form.get('fault'),
-            accident_area = request.form.get('accident_area'),
-            police_report_filed = request.form.get('police_report_filed'),
-            witness_present = request.form.get('witness_present'),
-            vehicle_category = request.form.get('vehicle_category')
+            # Numeric
+            age                    = int(request.form.get('age')),
+            week_of_month          = int(request.form.get('week_of_month')),
+            week_of_month_claimed  = int(request.form.get('week_of_month_claimed')),
+            rep_number             = int(request.form.get('rep_number')),
+            deductible             = int(request.form.get('deductible')),
+            driver_rating          = int(request.form.get('driver_rating')),
+            year                   = int(request.form.get('year')),
+            # Categorical
+            month                  = request.form.get('month'),
+            day_of_week            = request.form.get('day_of_week'),
+            make                   = request.form.get('make'),
+            accident_area          = request.form.get('accident_area'),
+            day_of_week_claimed    = request.form.get('day_of_week_claimed'),
+            month_claimed          = request.form.get('month_claimed'),
+            sex                    = request.form.get('sex'),
+            marital_status         = request.form.get('marital_status'),
+            fault                  = request.form.get('fault'),
+            policy_type            = request.form.get('policy_type'),
+            vehicle_category       = request.form.get('vehicle_category'),
+            vehicle_price          = request.form.get('vehicle_price'),
+            days_policy_accident   = request.form.get('days_policy_accident'),
+            days_policy_claim      = request.form.get('days_policy_claim'),
+            past_number_of_claims  = request.form.get('past_number_of_claims'),
+            age_of_vehicle         = request.form.get('age_of_vehicle'),
+            age_of_policy_holder   = request.form.get('age_of_policy_holder'),
+            police_report_filed    = request.form.get('police_report_filed'),
+            witness_present        = request.form.get('witness_present'),
+            agent_type             = request.form.get('agent_type'),
+            number_of_suppliments  = request.form.get('number_of_suppliments'),
+            address_change_claim   = request.form.get('address_change_claim'),
+            number_of_cars         = request.form.get('number_of_cars'),
+            base_policy            = request.form.get('base_policy'),
         )
+
         
         # Convert to DataFrame
         pred_df = data.get_data_as_df()

@@ -135,24 +135,26 @@
                 <div class="card-body">
                     <form action="/predict_fraud" method="POST" class="fraud-form" id="fraudForm">
 
+                        <!-- How to read this form -->
+                        <div class="fraud-legend">
+                            <span class="legend-item"><span class="key-badge">KEY</span> High-impact fraud signal</span>
+                            <span class="legend-sep">·</span>
+                            <span class="legend-hint">Hints explain why each field matters to the model</span>
+                        </div>
+
+                        <!-- ═══════════ Section 1: Claimant Profile ═══════════ -->
                         <div class="form-section">
                             <div class="section-header">
                                 <span class="material-icons-round">person</span>
-                                <h4>Driver & Policy Profile</h4>
+                                <h4>Claimant Profile</h4>
                             </div>
                             <div class="form-grid">
                                 <div class="form-field">
-                                    <label class="form-label" for="months_as_customer">Months as Customer</label>
-                                    <div class="input-wrapper">
-                                        <input type="number" id="months_as_customer" name="months_as_customer"
-                                            class="form-input" required value="120">
-                                    </div>
-                                </div>
-                                <div class="form-field">
                                     <label class="form-label" for="age">Age</label>
                                     <div class="input-wrapper">
-                                        <input type="number" id="age" name="age" class="form-input" required value="35">
+                                        <input type="number" id="age" name="age" class="form-input" required value="35" min="16" max="80">
                                     </div>
+                                    <span class="field-hint">Younger claimants with no prior history are flagged more often.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="sex">Sex</label>
@@ -163,6 +165,7 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
+                                    <span class="field-hint">Demographic feature used alongside other signals.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="marital_status">Marital Status</label>
@@ -171,35 +174,53 @@
                                             <option value="Married">Married</option>
                                             <option value="Single">Single</option>
                                             <option value="Divorced">Divorced</option>
+                                            <option value="Widow">Widow</option>
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
+                                    <span class="field-hint">Lifestyle context alongside claim history.</span>
                                 </div>
                                 <div class="form-field">
-                                    <label class="form-label" for="policy_annual_premium">Policy Premium</label>
-                                    <div class="input-wrapper input-with-icon">
-                                        <span class="input-icon">$</span>
-                                        <input type="number" step="0.01" id="policy_annual_premium"
-                                            name="policy_annual_premium" class="form-input" required value="1000">
+                                    <label class="form-label" for="age_of_policy_holder">Age of Policy Holder</label>
+                                    <div class="select-wrapper">
+                                        <select id="age_of_policy_holder" name="age_of_policy_holder" class="form-select">
+                                            <option value="16 to 17">16 to 17</option>
+                                            <option value="18 to 20">18 to 20</option>
+                                            <option value="21 to 25">21 to 25</option>
+                                            <option value="26 to 30">26 to 30</option>
+                                            <option value="31 to 35" selected>31 to 35</option>
+                                            <option value="36 to 40">36 to 40</option>
+                                            <option value="41 to 50">41 to 50</option>
+                                            <option value="51 to 65">51 to 65</option>
+                                            <option value="over 65">Over 65</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                </div>
-                                <div class="form-field">
-                                    <label class="form-label" for="policy_deductable">Policy Deductible</label>
-                                    <div class="input-wrapper input-with-icon">
-                                        <span class="input-icon">$</span>
-                                        <input type="number" id="policy_deductable" name="policy_deductable"
-                                            class="form-input" required value="500">
-                                    </div>
+                                    <span class="field-hint">Age band when policy was taken out.</span>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- ═══════════ Section 2: Incident Details ═══════════ -->
                         <div class="form-section">
                             <div class="section-header">
                                 <span class="material-icons-round">car_crash</span>
                                 <h4>Incident Details</h4>
                             </div>
                             <div class="form-grid">
+                                <div class="form-field">
+                                    <label class="form-label" for="fault">
+                                        Incident Fault <span class="key-badge">KEY</span>
+                                    </label>
+                                    <div class="select-wrapper">
+                                        <select id="fault" name="fault" class="form-select">
+                                            <option value="Policy Holder">Policy Holder</option>
+                                            <option value="Third Party">Third Party</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                    <span class="field-hint">Policy Holder at fault + no police report = highest-risk.</span>
+                                </div>
                                 <div class="form-field">
                                     <label class="form-label" for="accident_area">Accident Area</label>
                                     <div class="select-wrapper">
@@ -209,16 +230,35 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
+                                    <span class="field-hint">Rural incidents with no witnesses are harder to verify.</span>
                                 </div>
                                 <div class="form-field">
-                                    <label class="form-label" for="fault">Incident Fault</label>
+                                    <label class="form-label" for="make">Vehicle Make</label>
                                     <div class="select-wrapper">
-                                        <select id="fault" name="fault" class="form-select">
-                                            <option value="Policy Holder">Policy Holder</option>
-                                            <option value="Third Party">Third Party</option>
+                                        <select id="make" name="make" class="form-select">
+                                            <option value="Honda">Honda</option>
+                                            <option value="Toyota">Toyota</option>
+                                            <option value="Ford">Ford</option>
+                                            <option value="Chevrolet">Chevrolet</option>
+                                            <option value="BMW">BMW</option>
+                                            <option value="Mercedes" >Mecedes</option>
+                                            <option value="Accura">Accura</option>
+                                            <option value="Dodge">Dodge</option>
+                                            <option value="Ferrari">Ferrari</option>
+                                            <option value="Jaguar">Jaguar</option>
+                                            <option value="Lexus">Lexus</option>
+                                            <option value="Mazda">Mazda</option>
+                                            <option value="Mercury">Mercury</option>
+                                            <option value="Nisson">Nisson</option>
+                                            <option value="Pontiac">Pontiac</option>
+                                            <option value="Porche">Porche</option>
+                                            <option value="Saab">Saab</option>
+                                            <option value="Saturn">Saturn</option>
+                                            <option value="VW">VW</option>
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
+                                    <span class="field-hint">High-value makes with fresh policies are statistically riskier.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="vehicle_category">Vehicle Category</label>
@@ -230,43 +270,99 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
+                                    <span class="field-hint">Sport vehicles with new-vehicle age are flagged more often.</span>
                                 </div>
                                 <div class="form-field">
-                                    <label class="form-label" for="total_claim_amount">Total Claim Amount</label>
-                                    <div class="input-wrapper input-with-icon">
-                                        <span class="input-icon">$</span>
-                                        <input type="number" id="total_claim_amount" name="total_claim_amount"
-                                            class="form-input" required value="50000">
+                                    <label class="form-label" for="vehicle_price">Vehicle Price</label>
+                                    <div class="select-wrapper">
+                                        <select id="vehicle_price" name="vehicle_price" class="form-select">
+                                            <option value="less than 20000">Less than $20,000</option>
+                                            <option value="20000 to 29000">$20,000 – $29,000</option>
+                                            <option value="30000 to 39000">$30,000 – $39,000</option>
+                                            <option value="40000 to 59000">$40,000 – $59,000</option>
+                                            <option value="60000 to 69000">$60,000 – $69,000</option>
+                                            <option value="more than 69000">More than $69,000</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
+                                    <span class="field-hint">Very high vehicle value relative to deductible is suspicious.</span>
                                 </div>
                                 <div class="form-field">
-                                    <label class="form-label" for="incident_hour_of_the_day">Incident Hour
-                                        (0-23)</label>
-                                    <div class="input-wrapper">
-                                        <input type="number" id="incident_hour_of_the_day"
-                                            name="incident_hour_of_the_day" class="form-input" required value="14">
+                                    <label class="form-label" for="age_of_vehicle">
+                                        Age of Vehicle <span class="key-badge">KEY</span>
+                                    </label>
+                                    <div class="select-wrapper">
+                                        <select id="age_of_vehicle" name="age_of_vehicle" class="form-select">
+                                            <option value="new">New</option>
+                                            <option value="2 years">2 years</option>
+                                            <option value="3 years">3 years</option>
+                                            <option value="4 years">4 years</option>
+                                            <option value="5 years">5 years</option>
+                                            <option value="6 years">6 years</option>
+                                            <option value="7 years">7 years</option>
+                                            <option value="more than 7">More than 7 years</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
+                                    <span class="field-hint">Brand-new vehicle + same-day accident = very strong fraud signal.</span>
                                 </div>
                                 <div class="form-field">
-                                    <label class="form-label" for="number_of_vehicles_involved">Vehicles
-                                        Involved</label>
-                                    <div class="input-wrapper">
-                                        <input type="number" id="number_of_vehicles_involved"
-                                            name="number_of_vehicles_involved" class="form-input" required value="1">
+                                    <label class="form-label" for="deductible">Policy Deductible ($)</label>
+                                    <div class="select-wrapper">
+                                        <select id="deductible" name="deductible" class="form-select">
+                                            <option value="300">$300</option>
+                                            <option value="400">$400</option>
+                                            <option value="500" selected>$500</option>
+                                            <option value="700">$700</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
+                                    <span class="field-hint">Very low deductibles on high-value vehicles are suspicious.</span>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="policy_type">Policy Type</label>
+                                    <div class="select-wrapper">
+                                        <select id="policy_type" name="policy_type" class="form-select">
+                                            <option value="Sedan - Collision">Sedan - Collision</option>
+                                            <option value="Sedan - All Perils">Sedan - All Perils</option>
+                                            <option value="Sedan - Liability">Sedan - Liability</option>
+                                            <option value="Sport - Collision">Sport - Collision</option>
+                                            <option value="Sport - All Perils">Sport - All Perils</option>
+                                            <option value="Sport - Liability">Sport - Liability</option>
+                                            <option value="Utility - Collision">Utility - Collision</option>
+                                            <option value="Utility - All Perils">Utility - All Perils</option>
+                                            <option value="Utility - Liability">Utility - Liability</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                    <span class="field-hint">All Perils coverage with a new vehicle raises a red flag.</span>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="base_policy">Base Policy</label>
+                                    <div class="select-wrapper">
+                                        <select id="base_policy" name="base_policy" class="form-select">
+                                            <option value="Collision">Collision</option>
+                                            <option value="All Perils">All Perils</option>
+                                            <option value="Liability">Liability</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                    <span class="field-hint">Broad coverage on high-value vehicles is flagged more.</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Section 3: Legal & Witnesses -->
+                        <!-- ═══════════ Section 3: Legal & Fraud Signals ═══════════ -->
                         <div class="form-section">
                             <div class="section-header">
                                 <span class="material-icons-round">gavel</span>
-                                <h4>Legal & Witnesses</h4>
+                                <h4>Legal &amp; Fraud Signals</h4>
                             </div>
                             <div class="form-grid">
                                 <div class="form-field">
-                                    <label class="form-label" for="police_report_filed">Police Report Filed</label>
+                                    <label class="form-label" for="police_report_filed">
+                                        Police Report Filed <span class="key-badge">KEY</span>
+                                    </label>
                                     <div class="select-wrapper">
                                         <select id="police_report_filed" name="police_report_filed" class="form-select">
                                             <option value="No">No</option>
@@ -274,9 +370,12 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
+                                    <span class="field-hint">No police report is one of the strongest fraud indicators.</span>
                                 </div>
                                 <div class="form-field">
-                                    <label class="form-label" for="witness_present">Witness Present</label>
+                                    <label class="form-label" for="witness_present">
+                                        Witness Present <span class="key-badge">KEY</span>
+                                    </label>
                                     <div class="select-wrapper">
                                         <select id="witness_present" name="witness_present" class="form-select">
                                             <option value="No">No</option>
@@ -284,52 +383,281 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
+                                    <span class="field-hint">No witnesses + no police report = highest fraud probability.</span>
                                 </div>
                                 <div class="form-field">
-                                    <label class="form-label" for="witnesses">Witness Count</label>
-                                    <div class="input-wrapper">
-                                        <input type="number" id="witnesses" name="witnesses" class="form-input" required
-                                            value="0">
+                                    <label class="form-label" for="days_policy_accident">
+                                        Days: Policy &#8594; Accident <span class="key-badge">KEY</span>
+                                    </label>
+                                    <div class="select-wrapper">
+                                        <select id="days_policy_accident" name="days_policy_accident" class="form-select">
+                                            <option value="none">Same day (none)</option>
+                                            <option value="1 to 7">1 to 7 days</option>
+                                            <option value="8 to 15">8 to 15 days</option>
+                                            <option value="15 to 30">15 to 30 days</option>
+                                            <option value="more than 30" selected>More than 30 days</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
+                                    <span class="field-hint">Accident on same day as policy start is the #1 red flag.</span>
                                 </div>
                                 <div class="form-field">
-                                    <label class="form-label" for="bodily_injuries">Bodily Injuries</label>
-                                    <div class="input-wrapper">
-                                        <input type="number" id="bodily_injuries" name="bodily_injuries"
-                                            class="form-input" required value="0">
+                                    <label class="form-label" for="days_policy_claim">Days: Policy &#8594; Claim</label>
+                                    <div class="select-wrapper">
+                                        <select id="days_policy_claim" name="days_policy_claim" class="form-select">
+                                            <option value="none">Same day (none)</option>
+                                            <option value="8 to 15">8 to 15 days</option>
+                                            <option value="15 to 30">15 to 30 days</option>
+                                            <option value="more than 30" selected>More than 30 days</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
+                                    <span class="field-hint">Very quick claim filing after policy start is suspicious.</span>
                                 </div>
                                 <div class="form-field">
-                                    <label class="form-label" for="umbrella_limit">Umbrella Limit</label>
-                                    <div class="input-wrapper input-with-icon">
-                                        <span class="input-icon">$</span>
-                                        <input type="number" id="umbrella_limit" name="umbrella_limit"
-                                            class="form-input" required value="0">
+                                    <label class="form-label" for="past_number_of_claims">
+                                        Past Number of Claims <span class="key-badge">KEY</span>
+                                    </label>
+                                    <div class="select-wrapper">
+                                        <select id="past_number_of_claims" name="past_number_of_claims" class="form-select">
+                                            <option value="none">None</option>
+                                            <option value="1">1</option>
+                                            <option value="2 to 4">2 to 4</option>
+                                            <option value="more than 4">More than 4</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
+                                    <span class="field-hint">Repeat claimants are significantly more likely to commit fraud.</span>
                                 </div>
                                 <div class="form-field">
-                                    <label class="form-label" for="capital_gains">Capital Gains</label>
-                                    <div class="input-wrapper input-with-icon">
-                                        <span class="input-icon">$</span>
-                                        <input type="number" id="capital_gains" name="capital_gains" class="form-input"
-                                            required value="0">
+                                    <label class="form-label" for="number_of_suppliments">Number of Supplements</label>
+                                    <div class="select-wrapper">
+                                        <select id="number_of_suppliments" name="number_of_suppliments" class="form-select">
+                                            <option value="none">None</option>
+                                            <option value="1 to 2">1 to 2</option>
+                                            <option value="3 to 5">3 to 5</option>
+                                            <option value="more than 5">More than 5</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
+                                    <span class="field-hint">Many supplemental claims on one accident are suspicious.</span>
                                 </div>
                                 <div class="form-field">
-                                    <label class="form-label" for="capital_loss">Capital Loss</label>
-                                    <div class="input-wrapper input-with-icon">
-                                        <span class="input-icon">$</span>
-                                        <input type="number" id="capital_loss" name="capital_loss" class="form-input"
-                                            required value="0">
+                                    <label class="form-label" for="address_change_claim">Address Change Before Claim</label>
+                                    <div class="select-wrapper">
+                                        <select id="address_change_claim" name="address_change_claim" class="form-select">
+                                            <option value="no change" selected>No Change</option>
+                                            <option value="under 6 months">Under 6 months</option>
+                                            <option value="1 year">1 year</option>
+                                            <option value="2 to 3 years">2 to 3 years</option>
+                                            <option value="4 to 8 years">4 to 8 years</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
+                                    <span class="field-hint">Recent address changes before a claim can indicate intent to defraud.</span>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="agent_type">Agent Type</label>
+                                    <div class="select-wrapper">
+                                        <select id="agent_type" name="agent_type" class="form-select">
+                                            <option value="External">External</option>
+                                            <option value="Internal">Internal</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                    <span class="field-hint">External agents have been statistically associated with more fraud cases.</span>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="number_of_cars">Number of Cars</label>
+                                    <div class="select-wrapper">
+                                        <select id="number_of_cars" name="number_of_cars" class="form-select">
+                                            <option value="1 vehicle" selected>1 vehicle</option>
+                                            <option value="2 vehicles">2 vehicles</option>
+                                            <option value="3 to 4">3 to 4</option>
+                                            <option value="5 to 8">5 to 8</option>
+                                            <option value="more than 8">More than 8</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                    <span class="field-hint">Single vehicle incidents with a new vehicle are more suspicious.</span>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- ═══════════ Optional / Metadata Fields (accordion) ═══════════ -->
+                        <details class="advanced-section">
+                            <summary class="advanced-toggle">
+                                <span class="material-icons-round">tune</span>
+                                Additional Details
+                                <span class="advanced-note">Timing, claim dates &amp; admin fields</span>
+                                <span class="material-icons-round toggle-chevron">expand_more</span>
+                            </summary>
+                            <div class="form-grid advanced-grid">
+                                <div class="form-field">
+                                    <label class="form-label" for="month">Incident Month</label>
+                                    <div class="select-wrapper">
+                                        <select id="month" name="month" class="form-select">
+                                            <option value="Jan">January</option>
+                                            <option value="Feb">February</option>
+                                            <option value="Mar">March</option>
+                                            <option value="Apr">April</option>
+                                            <option value="May">May</option>
+                                            <option value="Jun">June</option>
+                                            <option value="Jul">July</option>
+                                            <option value="Aug">August</option>
+                                            <option value="Sep">September</option>
+                                            <option value="Oct">October</option>
+                                            <option value="Nov">November</option>
+                                            <option value="Dec">December</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                    <span class="field-hint">Month the accident occurred.</span>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="week_of_month">Week of Month (Incident)</label>
+                                    <div class="select-wrapper">
+                                        <select id="week_of_month" name="week_of_month" class="form-select">
+                                            <option value="1">Week 1</option>
+                                            <option value="2">Week 2</option>
+                                            <option value="3" selected>Week 3</option>
+                                            <option value="4">Week 4</option>
+                                            <option value="5">Week 5</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                    <span class="field-hint">Week number when the incident occurred.</span>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="day_of_week">Day of Week (Incident)</label>
+                                    <div class="select-wrapper">
+                                        <select id="day_of_week" name="day_of_week" class="form-select">
+                                            <option value="Monday">Monday</option>
+                                            <option value="Tuesday">Tuesday</option>
+                                            <option value="Wednesday">Wednesday</option>
+                                            <option value="Thursday">Thursday</option>
+                                            <option value="Friday">Friday</option>
+                                            <option value="Saturday">Saturday</option>
+                                            <option value="Sunday">Sunday</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                    <span class="field-hint">Day of week when the incident occurred.</span>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="month_claimed">Month Claimed</label>
+                                    <div class="select-wrapper">
+                                        <select id="month_claimed" name="month_claimed" class="form-select">
+                                            <option value="Jan">January</option>
+                                            <option value="Feb">February</option>
+                                            <option value="Mar">March</option>
+                                            <option value="Apr">April</option>
+                                            <option value="May">May</option>
+                                            <option value="Jun">June</option>
+                                            <option value="Jul">July</option>
+                                            <option value="Aug">August</option>
+                                            <option value="Sep">September</option>
+                                            <option value="Oct">October</option>
+                                            <option value="Nov">November</option>
+                                            <option value="Dec">December</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                    <span class="field-hint">Month the claim was filed.</span>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="week_of_month_claimed">Week of Month (Claim)</label>
+                                    <div class="select-wrapper">
+                                        <select id="week_of_month_claimed" name="week_of_month_claimed" class="form-select">
+                                            <option value="1">Week 1</option>
+                                            <option value="2">Week 2</option>
+                                            <option value="3" selected>Week 3</option>
+                                            <option value="4">Week 4</option>
+                                            <option value="5">Week 5</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                    <span class="field-hint">Week number when the claim was filed.</span>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="day_of_week_claimed">Day of Week (Claim)</label>
+                                    <div class="select-wrapper">
+                                        <select id="day_of_week_claimed" name="day_of_week_claimed" class="form-select">
+                                            <option value="Monday">Monday</option>
+                                            <option value="Tuesday">Tuesday</option>
+                                            <option value="Wednesday">Wednesday</option>
+                                            <option value="Thursday">Thursday</option>
+                                            <option value="Friday">Friday</option>
+                                            <option value="Saturday">Saturday</option>
+                                            <option value="Sunday">Sunday</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                    <span class="field-hint">Day of week when the claim was filed.</span>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="driver_rating">Driver Rating</label>
+                                    <div class="select-wrapper">
+                                        <select id="driver_rating" name="driver_rating" class="form-select">
+                                            <option value="1">1 (Highest)</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4 (Lowest)</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                    <span class="field-hint">Driver risk rating assigned by the insurer.</span>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="rep_number">Rep Number</label>
+                                    <div class="select-wrapper">
+                                        <select id="rep_number" name="rep_number" class="form-select">
+                                            <option value="1">Rep 1</option>
+                                            <option value="2">Rep 2</option>
+                                            <option value="3">Rep 3</option>
+                                            <option value="4">Rep 4</option>
+                                            <option value="5">Rep 5</option>
+                                            <option value="6">Rep 6</option>
+                                            <option value="7">Rep 7</option>
+                                            <option value="8">Rep 8</option>
+                                            <option value="9">Rep 9</option>
+                                            <option value="10">Rep 10</option>
+                                            <option value="11">Rep 11</option>
+                                            <option value="12">Rep 12</option>
+                                            <option value="13">Rep 13</option>
+                                            <option value="14">Rep 14</option>
+                                            <option value="15">Rep 15</option>
+                                            <option value="16">Rep 16</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                    <span class="field-hint">Insurance representative handling the claim.</span>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="year">Year</label>
+                                    <div class="select-wrapper">
+                                        <select id="year" name="year" class="form-select">
+                                            <option value="1994">1994</option>
+                                            <option value="1995" selected>1995</option>
+                                            <option value="1996">1996</option>
+                                        </select>
+                                        <span class="material-icons-round select-arrow">expand_more</span>
+                                    </div>
+                                    <span class="field-hint">Year the incident was recorded.</span>
+                                </div>
+                            </div>
+                        </details>
 
                         <button type="submit" class="btn-primary btn-large">
                             <span class="material-icons-round">analytics</span>
                             <span>Run Fraud Check</span>
                         </button>
+                        <p class="form-disclaimer">
+                            <span class="material-icons-round"
+                                style="font-size:14px;vertical-align:middle; padding-top: 4px;">info</span>
+                            Demo mode: some policy metadata fields (vehicle make, year, policy type) use default values
+                            not shown in this form.
+                        </p>
                     </form>
 
                     {% if fraud_result %}
@@ -380,10 +708,10 @@
                                     </div>
                                     <h4 class="upload-title">Upload Vehicle Image</h4>
                                     <p class="upload-subtitle">Drag & drop or click to browse</p>
-                                    <span class="upload-hint">Supports: JPG, PNG, WebP, HEIC, AVIF, TIFF, BMP (Max
-                                        5MB)</span>
+                                    <span class="upload-hint">Supports: JPG, PNG, WebP (Max 5MB)</span>
                                 </div>
                             </label>
+                            <div class="upload-error" id="uploadError" style="display:none;"></div>
                         </div>
 
                         <div class="preview-container" id="previewContainer" style="display: none;">
@@ -404,7 +732,8 @@
                     </form>
 
                     {% if damage_result %}
-                    <div class="result-container {% if damage_result == 'damage-detected' %}result-danger{% else %}result-success{% endif %}">
+                    <div
+                        class="result-container {% if damage_result == 'damage-detected' %}result-danger{% else %}result-success{% endif %}">
                         <div class="result-icon">
                             {% if damage_result == 'damage-detected' %}
                             <span class="material-icons-round">warning</span>
@@ -415,16 +744,16 @@
                         <div class="result-content">
                             <h4 class="result-title">
                                 {% if damage_result == 'damage-detected' %}
-                                Damage detected!
+                                Vehicle Damage Confirmed
                                 {% else %}
-                                Your Car is Safe!
+                                No Damage Detected
                                 {% endif %}
                             </h4>
                             <p class="result-text">
                                 {% if damage_result == 'damage-detected' %}
-                                Your Car is Damaged
+                                Visible damage found in the submitted vehicle image. Manual inspection recommended.
                                 {% else %}
-                                No visible damage detected
+                                No visible damage detected in the submitted vehicle image.
                                 {% endif %}
                             </p>
                         </div>
@@ -467,8 +796,8 @@
                     <span class="material-icons-round">smart_toy</span>
                 </div>
                 <div class="message-bubble">
-                    <p>Hello! 👋 I'm your AI claims assistant. I can help you with claim procedures, policy details,
-                        fraud indicators, and assessment guidelines.</p>
+                    <p>Hello! 👋 I'm your InsureTech 360 support assistant. I can help you with claim procedures, policy
+                        coverage questions, and what to expect during the claims process. How can I help you today?</p>
                 </div>
             </div>
         </div>

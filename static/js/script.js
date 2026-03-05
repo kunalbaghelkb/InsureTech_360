@@ -60,14 +60,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (damageForm) {
         damageForm.addEventListener('submit', function(e) {
             const fileInput = document.getElementById('fileUpload');
-            
+
             // Check if an image is selected
             if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
                 e.preventDefault();
-                alert('Please select an image before submitting.');
+                showUploadError('Please select an image before submitting.');
                 return false;
             }
-            
+
             showLoading("Assessing vehicle damage...");
         });
     }
@@ -100,51 +100,60 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Image Upload & Preview
+function showUploadError(message) {
+    const errorDiv = document.getElementById('uploadError');
+    if (errorDiv) {
+        errorDiv.textContent = '⚠ ' + message;
+        errorDiv.style.display = 'block';
+        setTimeout(() => { errorDiv.style.display = 'none'; }, 5000);
+    }
+}
+
 function previewImage(event) {
     const file = event.target.files[0];
-    
+
     if (!file) return;
-    
+
     // Validate file type
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!validTypes.includes(file.type)) {
-        alert('Please upload a valid image file (JPG, PNG, or WebP)');
+        showUploadError('Please upload a valid image file (JPG, PNG, or WebP).');
         event.target.value = '';
         return;
     }
-    
+
     // Validate file size (5MB max)
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
-        alert('File size must be less than 5MB');
+        showUploadError('File size must be less than 5MB.');
         event.target.value = '';
         return;
     }
-    
+
     const reader = new FileReader();
-    
+
     reader.onload = function(e) {
         const preview = document.getElementById('preview');
         const previewContainer = document.getElementById('previewContainer');
         const uploadArea = document.getElementById('uploadArea');
-        
+
         preview.src = e.target.result;
-        
+
         // Show preview with animation
         uploadArea.style.display = 'none';
         previewContainer.style.display = 'block';
-        
+
         // Trigger fade-in animation
         setTimeout(() => {
             previewContainer.style.opacity = '1';
         }, 10);
     };
-    
+
     reader.onerror = function() {
-        alert('Error reading file. Please try again.');
+        showUploadError('Error reading file. Please try again.');
         event.target.value = '';
     };
-    
+
     reader.readAsDataURL(file);
 }
 
