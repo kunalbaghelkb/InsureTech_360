@@ -1,12 +1,17 @@
 import os
 from datetime import datetime
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, send_from_directory
 from flask_cors import CORS
 from src.pipelines.prediction_pipeline import FraudData, FraudPredictor, DamagePredictor
 from src.components.rag_engine import RAGEngine
 
 app = Flask(__name__)
 CORS(app)
+
+# Inject current_year into every template automatically
+@app.context_processor
+def inject_globals():
+    return {"current_year": datetime.now().year}
 
 # Global Initialization
 try:
@@ -18,14 +23,19 @@ except Exception as e:
     rag_engine = None
 
 # Routes
+@app.route('/uploads/<path:filename>')
+def uploaded_file(filename):
+    """Serve images saved to /tmp/uploads (writable on Hugging Face Spaces)."""
+    return send_from_directory('/tmp/uploads', filename)
+
 @app.route('/')
 def home():
-    return render_template('index.html', current_year=datetime.now().year)
+    return render_template('index.html')
 
 @app.route('/predict_fraud', methods=['GET', 'POST'])
 def predict_fraud():
     if request.method == 'GET':
-        return render_template('index.html', current_year=datetime.now().year)
+        return render_template('index.html')
     
     try:
         # Read all 31 real CSV columns from the form — no hardcoded defaults
@@ -76,38 +86,41 @@ def predict_fraud():
         
         # Return Result
         status = "FRAUDULENT" if result == 1 else "GENUINE"
-        return render_template('index.html', fraud_result=status, current_year=datetime.now().year)
+        return render_template('index.html', fraud_result=status)
 
     except Exception as e:
         print(f"Error in Fraud Prediction: {e}")
-        return render_template('index.html', fraud_result=f"Error: {e}", current_year=datetime.now().year)
+        return render_template('index.html', fraud_result=f"Error: {e}")
 
 @app.route('/predict_damage', methods=['POST'])
 def predict_damage():
     try:
         if 'file' not in request.files:
-            return render_template('index.html', damage_result="No file uploaded", current_year=datetime.now().year)
+            return render_template('index.html', damage_result="No file uploaded")
         
         file = request.files['file']
         if file.filename == '':
-            return render_template('index.html', damage_result="No file selected", current_year=datetime.now().year)
+            return render_template('index.html', damage_result="No file selected")
 
-        # Save Image Temporarily
-        if not os.path.exists('static/uploads'):
-            os.makedirs('static/uploads')
+        # Save Image Temporarily to /tmp (writable on Hugging Face Spaces)
+        upload_dir = '/tmp/uploads'
+        if not os.path.exists(upload_dir):
+            os.makedirs(upload_dir)
             
-        file_path = os.path.join('static/uploads', file.filename)
+        file_path = os.path.join(upload_dir, file.filename)
         file.save(file_path)
 
         # Predict
         damage_predictor = DamagePredictor()
         result = damage_predictor.predict(file_path)
 
-        return render_template('index.html', damage_result=result, uploaded_image=file_path, current_year=datetime.now().year)
+        # Pass a URL the browser can fetch (served by /uploads/ route)
+        image_url = f"/uploads/{file.filename}"
+        return render_template('index.html', damage_result=result, uploaded_image=image_url)
 
     except Exception as e:
         print(f"Error in Damage Prediction: {e}")
-        return render_template('index.html', damage_result=f"Error: {e}", current_year=datetime.now().year)
+        return render_template('index.html', damage_result=f"Error: {e}")
 
 @app.route('/ask_bot', methods=['POST'])
 def ask_bot():
