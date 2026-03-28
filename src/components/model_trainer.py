@@ -28,10 +28,10 @@ class ModelTrainer:
             
             # Array Slicing
             X_train, y_train, X_test, y_test = (
-                train_array[:, :-1],
-                train_array[:, -1],
-                test_array[:, :-1],
-                test_array[:, -1]
+                train_array[:, :-1], # X_train = 80%
+                train_array[:, -1], # y_train = 80%
+                test_array[:, :-1], # X_test = 20%
+                test_array[:, -1] #  y_test = 20%
             )
             
             # ---> Calculate Class Weights

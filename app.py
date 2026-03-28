@@ -143,6 +143,11 @@ def ask_bot():
 
     except Exception as e:
         return jsonify({'answer': f"Error: {e}"})
+    
+# Health Check Endpoint (To keep awake api on Hugging Face)
+@app.get("/health")
+def health_check():
+    return {"status": "awake", "message": "InsureTech is running!"}
 
 if __name__ == "__main__":
     # Host 0.0.0.0 makes it accessible on network
