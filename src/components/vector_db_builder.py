@@ -5,7 +5,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.vectorstores import FAISS
-from src.constants import *
+from src.constants import POLICY_PDF_PATH, FAISS_DB_PATH
 from src.exception import CustomException
 from src.logger import logging
 

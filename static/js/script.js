@@ -228,11 +228,17 @@ function handleDrop(e) {
 // Chatbot Functionality
 function toggleChat() {
     const chatWindow = document.getElementById('chatWindow');
+    const chatFab = document.querySelector('.chat-fab');
     
     if (chatWindow.classList.contains('active')) {
         chatWindow.classList.remove('active');
+        // Show FAB when chat is closed
+        if (chatFab) chatFab.style.display = 'flex';
     } else {
         chatWindow.classList.add('active');
+        // Hide FAB when chat is open
+        if (chatFab) chatFab.style.display = 'none';
+        
         // Focus on input when opening
         setTimeout(() => {
             const input = document.getElementById('userInput');
@@ -308,13 +314,44 @@ function addMessage(text, type) {
     
     const bubble = document.createElement('div');
     bubble.className = 'message-bubble';
-    bubble.innerHTML = `<p>${escapeHtml(text)}</p>`;
+    
+    // Format bot responses to handle markdown-like structures
+    if (type === 'bot') {
+        const formattedText = formatBotResponse(text);
+        bubble.innerHTML = `<div class="formatted-content">${formattedText}</div>`;
+    } else {
+        bubble.innerHTML = `<p>${escapeHtml(text)}</p>`;
+    }
     
     messageContainer.appendChild(avatar);
     messageContainer.appendChild(bubble);
     
     chatBody.appendChild(messageContainer);
     scrollChatToBottom();
+}
+
+/**
+ * Simple formatter to handle RAG response structures (bullets, bold, newlines)
+ */
+function formatBotResponse(text) {
+    let formatted = text;
+    
+    // Handle Bold (**text**)
+    formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // Handle Bullet Points (* or -)
+    formatted = formatted.replace(/^\s*[\*\-]\s+(.*)/gm, '<li>$1</li>');
+    
+    // Wrap lists in <ul> tags
+    if (formatted.includes('<li>')) {
+        // This is a simple regex-based wrap; works for basic flat lists
+        formatted = formatted.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+    }
+    
+    // Handle Line Breaks
+    formatted = formatted.replace(/\n/g, '<br>');
+    
+    return formatted;
 }
 
 function addTypingIndicator() {
@@ -651,6 +688,50 @@ function sendAssistantMessage() {
 function handleAssistantEnter(event) {
     if (event.key === 'Enter') {
         sendAssistantMessage();
+    }
+}
+
+// Scenario Loader
+async function loadScenario(category, index) {
+    try {
+        console.log(`🔍 Loading ${category} scenario at index ${index}...`);
+        showLoading(`Loading ${category} persona...`);
+        
+        const response = await fetch('/static/data/scenarios.json');
+        const data = await response.json();
+        const scenario = data[category][index];
+        
+        if (!scenario) {
+            console.error("❌ Scenario not found!");
+            hideLoading();
+            return;
+        }
+
+        console.log("📝 Injecting Data:", scenario);
+
+        // Fill form fields by ID
+        const fields = Object.keys(scenario);
+        fields.forEach(field => {
+            const element = document.getElementById(field);
+            if (element) {
+                element.value = scenario[field];
+                // Trigger change event for UI updates
+                element.dispatchEvent(new Event('change', { bubbles: true }));
+                element.parentElement.classList.add('filled');
+            } else {
+                console.warn(`⚠ Field ID '${field}' not found in form.`);
+            }
+        });
+
+        hideLoading();
+        announceToScreenReader(`${scenario.name} persona loaded successfully.`);
+        
+        // Smooth scroll to form start
+        document.getElementById('fraudForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+    } catch (error) {
+        console.error("❌ Failed to load scenario:", error);
+        hideLoading();
     }
 }
 

@@ -52,27 +52,36 @@ class RAGEngine:
                 allow_dangerous_deserialization=True
             )
             
-            # Convert to Retriever
-            retriever = vector_store.as_retriever()
+            # Convert to Retriever (Optimized: Retrieve only top 3 chunks for speed)
+            retriever = vector_store.as_retriever(search_kwargs={"k": 3})
             
-            # ---> Setup LLM
+            # ---> Setup LLM (Optimized for performance)
             llm = ChatGoogleGenerativeAI(
                 model=f"{self.config.google_llm_model_name}", 
-                temperature=0.3,
-                google_api_key=self.config.google_api_key
+                temperature=0.1, # Lower temperature for faster, more direct responses
+                google_api_key=self.config.google_api_key,
+                convert_system_message_to_human=True
             )
             
-            # ---> Prompt Template
+            # ---> Prompt Template (100% Optimized for Accuracy and Formatting)
             prompt = ChatPromptTemplate.from_template("""
-            You are an expert Insurance Assistant for 'InsureTech 360'.
-            Use the following pieces of context to answer the user's question.
-            If the answer is not in the context, just say "I don't know based on the policy document."
-            Don't try to make up an answer.
+            SYSTEM: You are a professional Insurance Claims Expert for 'InsureTech 360'. 
+            Your goal is to provide accurate, concise, and clear information based ONLY on the provided policy documents.
 
-            Context: {context}
-            Question: {question}
+            RULES:
+            1. Use the 'CONTEXT' provided below to answer the 'USER QUESTION'.
+            2. If the information is not present in the CONTEXT, state: "I'm sorry, but I cannot find that information in the current policy document."
+            3. Do NOT use outside knowledge or hallucinate details.
+            4. Use bullet points if the answer contains multiple steps or items for better readability.
 
-            Answer:
+            ---
+            CONTEXT:
+            {context}
+            ---
+            USER QUESTION: 
+            {question}
+
+            ASSISTANT RESPONSE:
             """)
             
             # ---> Build the Runnable Chain

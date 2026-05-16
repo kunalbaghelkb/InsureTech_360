@@ -1,10 +1,7 @@
 import os
 import sys
 from dataclasses import dataclass
-import numpy as np
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from sklearn.utils import class_weight
-import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.callbacks import EarlyStopping
@@ -34,47 +31,61 @@ class ModelTrainer:
                 test_array[:, -1] #  y_test = 20%
             )
             
-            # ---> Calculate Class Weights
-            logging.info("Calculating Class Weights to handle imbalance...")
+            # ---> Optimized Class Weights (1:20 Ratio for MAXIMUM Sensitivity)
+            logging.info("Applying 1:20 Class Weighting to shatter 'Safe Haven' biases...")
             
-            class_weights_vals = class_weight.compute_class_weight(
-                class_weight='balanced',
-                classes=np.unique(y_train),
-                y=y_train
-            )
+            # We use an aggressive ratio to force the model to prioritize risk
+            weights_dict = {0: 1.0, 1: 20.0}
             
-            # Keras need dictionary format
-            weights_dict = {0: class_weights_vals[0], 1: class_weights_vals[1]}
+            logging.info(f"Custom Class Weights: {weights_dict}")
             
-            logging.info(f"Class Weights Calculated: {weights_dict}")
+            # Note: We are no longer using SMOTE here to keep the data 'Real' but forcing
+            # the ANN to treat each fraud case as 10x more important.
+            X_train_res, y_train_res = X_train, y_train
             
-            # ---> Build ANN Architecture
-            logging.info("Building ANN Architecture...")
+            # ---> Build High-Precision Deep ANN Architecture
+            logging.info("Building Deep ANN Architecture (Optimized for Balanced Prediction)...")
+            from tensorflow.keras.layers import BatchNormalization, LeakyReLU
             
             model = Sequential()
             
-            model.add(Dense(units=64, activation='relu', input_dim=X_train.shape[1]))
+            # Input Layer
+            model.add(Dense(units=128, input_dim=X_train.shape[1]))
+            model.add(BatchNormalization())
+            model.add(LeakyReLU(alpha=0.1))
+            model.add(Dropout(0.4))
+            
+            # Hidden Layer 1
+            model.add(Dense(units=64))
+            model.add(BatchNormalization())
+            model.add(LeakyReLU(alpha=0.1))
             model.add(Dropout(0.3))
             
-            model.add(Dense(units=32, activation='relu'))
-            model.add(Dropout(0.3))
+            # Hidden Layer 2
+            model.add(Dense(units=32))
+            model.add(BatchNormalization())
+            model.add(LeakyReLU(alpha=0.1))
+            model.add(Dropout(0.2))
             
+            # Output Layer
             model.add(Dense(units=1, activation='sigmoid'))
 
             model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
             
             # ---> Train Model
-            logging.info("Training ANN Model with Class Weights...")
+            logging.info("Training ANN Model with SMOTETomek & Adaptive Learning Rate...")
+            from tensorflow.keras.callbacks import ReduceLROnPlateau
             
-            early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+            early_stop = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+            reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr=0.00001)
             
-            history = model.fit(
-                X_train, y_train,
+            model.fit(
+                X_train_res, y_train_res,
                 validation_split=0.2,
-                epochs=50,
-                batch_size=32,
+                epochs=100,
+                batch_size=64,
                 class_weight=weights_dict,
-                callbacks=[early_stop],
+                callbacks=[early_stop, reduce_lr],
                 verbose=1
             )
             

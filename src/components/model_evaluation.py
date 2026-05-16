@@ -1,7 +1,5 @@
-import os
 import sys
 import pandas as pd
-import numpy as np
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -9,7 +7,15 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from src.utils.common import load_object
 from src.logger import logging
 from src.exception import CustomException
-from src.constants import *
+from src.constants import (
+    TEST_DATA_PATH,
+    PREPROCESSOR_PATH,
+    ANN_MODEL_PATH,
+    CNN_MODEL_PATH,
+    CAR_IMAGES_TEST_PATH,
+    IMAGE_SIZE,
+    BATCH_SIZE,
+)
 
 class ModelEvaluation:
     def __init__(self):
@@ -31,6 +37,23 @@ class ModelEvaluation:
             # ---> Separate Features & Target
             logging.info("Preprocessing Test Data...")
             
+            # --- PERFECT ALIGNMENT: Ordinal Mapping ---
+            ordinal_map = {
+                'AgeOfVehicle': {'new': 0, '2 years': 1, '3 years': 2, '4 years': 3, '5 years': 4, '6 years': 5, '7 years': 6, 'more than 7': 7},
+                'VehiclePrice': {'less than 20000': 0, '20000 to 29000': 1, '30000 to 39000': 2, '40000 to 59000': 3, '60000 to 69000': 4, 'more than 69000': 5},
+                'AgeOfPolicyHolder': {'16 to 17': 0, '18 to 20': 1, '21 to 25': 2, '26 to 30': 3, '31 to 35': 4, '36 to 40': 5, '41 to 50': 6, '51 to 65': 7, 'over 65': 8},
+                'PastNumberOfClaims': {'none': 0, '1': 1, '2 to 4': 2, 'more than 4': 3},
+                'NumberOfSuppliments': {'none': 0, '1 to 2': 1, '3 to 5': 2, 'more than 5': 3},
+                'AddressChange_Claim': {'no change': 0, 'under 6 months': 1, '1 year': 2, '2 to 3 years': 3, '4 to 8 years': 4},
+                'NumberOfCars': {'1 vehicle': 0, '2 vehicles': 1, '3 to 4': 2, '5 to 8': 3, 'more than 8': 4},
+                'Days_Policy_Accident': {'none': 0, '1 to 7': 1, '8 to 15': 2, '15 to 30': 3, 'more than 30': 4},
+                'Days_Policy_Claim': {'none': 0, '1 to 7': 1, '8 to 15': 2, '15 to 30': 3, 'more than 30': 4}
+            }
+            
+            for col, mapping in ordinal_map.items():
+                if col in test_df.columns:
+                    test_df[col] = test_df[col].map(mapping).fillna(0)
+
             cols_to_drop = ["PolicyNumber"]
             target_column_name = "FraudFound_P"
             

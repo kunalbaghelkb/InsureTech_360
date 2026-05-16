@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 *.pyc
 .ipynb_checkpoints/
+.ruff_cache/
 
 # Security & Virtual Environments
 env/

@@ -119,8 +119,44 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <div class="content-container">
+        <div class="content-container-full">
+            <!-- 🎭 Demo Scenarios Gallery -->
+            <div class="demo-gallery-wrapper">
+                <div class="demo-gallery">
+                    <div class="demo-header">
+                        <div class="demo-title-group">
+                            <span class="material-icons-round">theater_comedy</span>
+                            <h4>Demo Persona Gallery</h4>
+                        </div>
+                        <p>Instantly load realistic insurance archetypes to test the AI's detection accuracy</p>
+                    </div>
+                    
+                    <div class="demo-groups">
+                        <div class="demo-group">
+                            <label>Verified (Genuine)</label>
+                            <div class="demo-buttons">
+                                <button type="button" class="btn-scenario" onclick="loadScenario('genuine', 0)">Perfect Policyholder</button>
+                                <button type="button" class="btn-scenario" onclick="loadScenario('genuine', 1)">Senior Driver</button>
+                                <button type="button" class="btn-scenario" onclick="loadScenario('genuine', 2)">Economy Car</button>
+                                <button type="button" class="btn-scenario" onclick="loadScenario('genuine', 5)">Utility Worker</button>
+                            </div>
+                        </div>
+                        
+                        <div class="demo-group">
+                            <label>High Risk (Fraud)</label>
+                            <div class="demo-buttons">
+                                <button type="button" class="btn-scenario btn-risk" onclick="loadScenario('fraud', 0)">Address Change</button>
+                                <button type="button" class="btn-scenario btn-risk" onclick="loadScenario('fraud', 2)">'Red Flag' Sport</button>
+                                <button type="button" class="btn-scenario btn-risk" onclick="loadScenario('fraud', 3)">Frequent Claimant</button>
+                                <button type="button" class="btn-scenario btn-risk" onclick="loadScenario('fraud', 5)">Youthful Sport</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="content-container">
             <div class="feature-card fraud-card">
                 <div class="card-header">
                     <div class="card-icon fraud-icon">
@@ -133,7 +169,8 @@
                 </div>
 
                 <div class="card-body">
-                    <form action="/predict_fraud" method="POST" class="fraud-form" id="fraudForm">
+
+                        <form action="/predict_fraud" method="POST" class="fraud-form" id="fraudForm">
 
                         <!-- How to read this form -->
                         <div class="fraud-legend">
@@ -152,9 +189,11 @@
                                 <div class="form-field">
                                     <label class="form-label" for="age">Age</label>
                                     <div class="input-wrapper">
-                                        <input type="number" id="age" name="age" class="form-input" required value="35" min="16" max="80">
+                                        <input type="number" id="age" name="age" class="form-input" required value="35"
+                                            min="16" max="80">
                                     </div>
-                                    <span class="field-hint">Younger claimants with no prior history are flagged more often.</span>
+                                    <span class="field-hint">Younger claimants with no prior history are flagged more
+                                        often.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="sex">Sex</label>
@@ -183,7 +222,8 @@
                                 <div class="form-field">
                                     <label class="form-label" for="age_of_policy_holder">Age of Policy Holder</label>
                                     <div class="select-wrapper">
-                                        <select id="age_of_policy_holder" name="age_of_policy_holder" class="form-select">
+                                        <select id="age_of_policy_holder" name="age_of_policy_holder"
+                                            class="form-select">
                                             <option value="16 to 17">16 to 17</option>
                                             <option value="18 to 20">18 to 20</option>
                                             <option value="21 to 25">21 to 25</option>
@@ -219,7 +259,8 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">Policy Holder at fault + no police report = highest-risk.</span>
+                                    <span class="field-hint">Policy Holder at fault + no police report =
+                                        highest-risk.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="accident_area">Accident Area</label>
@@ -230,7 +271,8 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">Rural incidents with no witnesses are harder to verify.</span>
+                                    <span class="field-hint">Rural incidents with no witnesses are harder to
+                                        verify.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="make">Vehicle Make</label>
@@ -241,7 +283,7 @@
                                             <option value="Ford">Ford</option>
                                             <option value="Chevrolet">Chevrolet</option>
                                             <option value="BMW">BMW</option>
-                                            <option value="Mercedes" >Mecedes</option>
+                                            <option value="Mercedes">Mecedes</option>
                                             <option value="Accura">Accura</option>
                                             <option value="Dodge">Dodge</option>
                                             <option value="Ferrari">Ferrari</option>
@@ -258,7 +300,8 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">High-value makes with fresh policies are statistically riskier.</span>
+                                    <span class="field-hint">High-value makes with fresh policies are statistically
+                                        riskier.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="vehicle_category">Vehicle Category</label>
@@ -270,7 +313,8 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">Sport vehicles with new-vehicle age are flagged more often.</span>
+                                    <span class="field-hint">Sport vehicles with new-vehicle age are flagged more
+                                        often.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="vehicle_price">Vehicle Price</label>
@@ -285,7 +329,8 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">Very high vehicle value relative to deductible is suspicious.</span>
+                                    <span class="field-hint">Very high vehicle value relative to deductible is
+                                        suspicious.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="age_of_vehicle">
@@ -304,7 +349,8 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">Brand-new vehicle + same-day accident = very strong fraud signal.</span>
+                                    <span class="field-hint">Brand-new vehicle + same-day accident = very strong fraud
+                                        signal.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="deductible">Policy Deductible ($)</label>
@@ -317,7 +363,8 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">Very low deductibles on high-value vehicles are suspicious.</span>
+                                    <span class="field-hint">Very low deductibles on high-value vehicles are
+                                        suspicious.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="policy_type">Policy Type</label>
@@ -335,7 +382,8 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">All Perils coverage with a new vehicle raises a red flag.</span>
+                                    <span class="field-hint">All Perils coverage with a new vehicle raises a red
+                                        flag.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="base_policy">Base Policy</label>
@@ -347,7 +395,8 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">Broad coverage on high-value vehicles is flagged more.</span>
+                                    <span class="field-hint">Broad coverage on high-value vehicles is flagged
+                                        more.</span>
                                 </div>
                             </div>
                         </div>
@@ -370,7 +419,8 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">No police report is one of the strongest fraud indicators.</span>
+                                    <span class="field-hint">No police report is one of the strongest fraud
+                                        indicators.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="witness_present">
@@ -383,14 +433,16 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">No witnesses + no police report = highest fraud probability.</span>
+                                    <span class="field-hint">No witnesses + no police report = highest fraud
+                                        probability.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="days_policy_accident">
                                         Days: Policy &#8594; Accident <span class="key-badge">KEY</span>
                                     </label>
                                     <div class="select-wrapper">
-                                        <select id="days_policy_accident" name="days_policy_accident" class="form-select">
+                                        <select id="days_policy_accident" name="days_policy_accident"
+                                            class="form-select">
                                             <option value="none">Same day (none)</option>
                                             <option value="1 to 7">1 to 7 days</option>
                                             <option value="8 to 15">8 to 15 days</option>
@@ -399,7 +451,8 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">Accident on same day as policy start is the #1 red flag.</span>
+                                    <span class="field-hint">Accident on same day as policy start is the #1 red
+                                        flag.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="days_policy_claim">Days: Policy &#8594; Claim</label>
@@ -412,14 +465,16 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">Very quick claim filing after policy start is suspicious.</span>
+                                    <span class="field-hint">Very quick claim filing after policy start is
+                                        suspicious.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="past_number_of_claims">
                                         Past Number of Claims <span class="key-badge">KEY</span>
                                     </label>
                                     <div class="select-wrapper">
-                                        <select id="past_number_of_claims" name="past_number_of_claims" class="form-select">
+                                        <select id="past_number_of_claims" name="past_number_of_claims"
+                                            class="form-select">
                                             <option value="none">None</option>
                                             <option value="1">1</option>
                                             <option value="2 to 4">2 to 4</option>
@@ -427,12 +482,14 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">Repeat claimants are significantly more likely to commit fraud.</span>
+                                    <span class="field-hint">Repeat claimants are significantly more likely to commit
+                                        fraud.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="number_of_suppliments">Number of Supplements</label>
                                     <div class="select-wrapper">
-                                        <select id="number_of_suppliments" name="number_of_suppliments" class="form-select">
+                                        <select id="number_of_suppliments" name="number_of_suppliments"
+                                            class="form-select">
                                             <option value="none">None</option>
                                             <option value="1 to 2">1 to 2</option>
                                             <option value="3 to 5">3 to 5</option>
@@ -440,12 +497,15 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">Many supplemental claims on one accident are suspicious.</span>
+                                    <span class="field-hint">Many supplemental claims on one accident are
+                                        suspicious.</span>
                                 </div>
                                 <div class="form-field">
-                                    <label class="form-label" for="address_change_claim">Address Change Before Claim</label>
+                                    <label class="form-label" for="address_change_claim">Address Change Before
+                                        Claim</label>
                                     <div class="select-wrapper">
-                                        <select id="address_change_claim" name="address_change_claim" class="form-select">
+                                        <select id="address_change_claim" name="address_change_claim"
+                                            class="form-select">
                                             <option value="no change" selected>No Change</option>
                                             <option value="under 6 months">Under 6 months</option>
                                             <option value="1 year">1 year</option>
@@ -454,7 +514,8 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">Recent address changes before a claim can indicate intent to defraud.</span>
+                                    <span class="field-hint">Recent address changes before a claim can indicate intent
+                                        to defraud.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="agent_type">Agent Type</label>
@@ -465,7 +526,8 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">External agents have been statistically associated with more fraud cases.</span>
+                                    <span class="field-hint">External agents have been statistically associated with
+                                        more fraud cases.</span>
                                 </div>
                                 <div class="form-field">
                                     <label class="form-label" for="number_of_cars">Number of Cars</label>
@@ -479,7 +541,8 @@
                                         </select>
                                         <span class="material-icons-round select-arrow">expand_more</span>
                                     </div>
-                                    <span class="field-hint">Single vehicle incidents with a new vehicle are more suspicious.</span>
+                                    <span class="field-hint">Single vehicle incidents with a new vehicle are more
+                                        suspicious.</span>
                                 </div>
                             </div>
                         </div>
@@ -568,7 +631,8 @@
                                 <div class="form-field">
                                     <label class="form-label" for="week_of_month_claimed">Week of Month (Claim)</label>
                                     <div class="select-wrapper">
-                                        <select id="week_of_month_claimed" name="week_of_month_claimed" class="form-select">
+                                        <select id="week_of_month_claimed" name="week_of_month_claimed"
+                                            class="form-select">
                                             <option value="1">Week 1</option>
                                             <option value="2">Week 2</option>
                                             <option value="3" selected>Week 3</option>

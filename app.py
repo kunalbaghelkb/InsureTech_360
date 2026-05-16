@@ -1,9 +1,17 @@
 import os
+import logging
 from datetime import datetime
 from flask import Flask, request, render_template, jsonify, send_from_directory
 from flask_cors import CORS
 from src.pipelines.prediction_pipeline import FraudData, FraudPredictor, DamagePredictor
 from src.components.rag_engine import RAGEngine
+
+# Setup Logging to file for deep auditing
+logging.basicConfig(
+    filename='audit_debug.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 app = Flask(__name__)
 CORS(app)
@@ -38,16 +46,24 @@ def predict_fraud():
         return render_template('index.html')
     
     try:
-        # Read all 31 real CSV columns from the form — no hardcoded defaults
+        # Generate a unique ID for this request to track in logs
+        request_id = datetime.now().strftime("%H%M%S")
+        logging.info(f"--- [START] Fraud Prediction Request ID: {request_id} ---")
+        
+        # Log RAW form data for debugging
+        raw_form = request.form.to_dict()
+        logging.info(f"Raw Form Data Received: {raw_form}")
+        
+        # Read all 31 real CSV columns from the form
         data = FraudData(
             # Numeric
-            age                    = int(request.form.get('age')),
-            week_of_month          = int(request.form.get('week_of_month')),
-            week_of_month_claimed  = int(request.form.get('week_of_month_claimed')),
-            rep_number             = int(request.form.get('rep_number')),
-            deductible             = int(request.form.get('deductible')),
-            driver_rating          = int(request.form.get('driver_rating')),
-            year                   = int(request.form.get('year')),
+            age                    = int(request.form.get('age', 0)),
+            week_of_month          = int(request.form.get('week_of_month', 0)),
+            week_of_month_claimed  = int(request.form.get('week_of_month_claimed', 0)),
+            rep_number             = int(request.form.get('rep_number', 0)),
+            deductible             = int(request.form.get('deductible', 0)),
+            driver_rating          = int(request.form.get('driver_rating', 0)),
+            year                   = int(request.form.get('year', 1994)),
             # Categorical
             month                  = request.form.get('month'),
             day_of_week            = request.form.get('day_of_week'),
@@ -75,17 +91,23 @@ def predict_fraud():
             base_policy            = request.form.get('base_policy'),
         )
 
-        
         # Convert to DataFrame
         pred_df = data.get_data_as_df()
-        print(f"User Input:\n{pred_df}")
+        logging.info(f"Request {request_id} - Mapped DataFrame:\n{pred_df.to_string()}")
 
         # Predict
         fraud_predictor = FraudPredictor()
-        result = fraud_predictor.predict(pred_df)
+        result, probability, _, _, _ = fraud_predictor.predict(pred_df)
         
-        # Return Result
-        status = "FRAUDULENT" if result == 1 else "GENUINE"
+        logging.info(f"Request {request_id} - Prediction Result: {result}, Probability: {probability}")
+        logging.info(f"--- [END] Request {request_id} ---")
+        
+        # Return Result with Probability for better UI
+        if result == 1:
+            status = f"FRAUDULENT — Risk Score: {probability:.1%}"
+        else:
+            status = f"GENUINE — Risk Score: {probability:.1%}"
+            
         return render_template('index.html', fraud_result=status)
 
     except Exception as e:
